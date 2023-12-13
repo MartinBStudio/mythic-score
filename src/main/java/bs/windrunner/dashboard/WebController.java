@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 public class WebController {
     private final RaiderIoApi raiderIoApi;
-    private final boolean isDummyMode = true;
+    private final boolean isDummyMode = false;
 
     @GetMapping("/dashboard")
     public String greeting(){
