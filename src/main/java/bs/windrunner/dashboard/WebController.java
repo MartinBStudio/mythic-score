@@ -20,6 +20,7 @@ import java.util.List;
 @Slf4j
 public class WebController {
     private final RaiderIoApi raiderIoApi;
+    private final boolean isDummyMode = true;
 
     @GetMapping("/dashboard")
     public String greeting(){
@@ -28,18 +29,14 @@ public class WebController {
     @GetMapping("/characters")
     @ResponseBody
     public String characters(@RequestParam(name = "name", required = true, defaultValue = "default") String name, Model model) throws InterruptedException {
-        // Your existing logic to fetch character data goes here
         var characters = new ArrayList<CharacterModel>();
         String[] nameArray = name.split("\\s+");
-        // Convert the array to a list
         List<String> nameList = new ArrayList<>(Arrays.asList(nameArray));
         for (String s : nameList) {
-            log.info("Name:" +s);
-            var characterModel = raiderIoApi.getEntity(s);
+            var characterModel = isDummyMode?raiderIoApi.getFakeEntity(s):raiderIoApi.getEntity(s);
             characters.add(characterModel);
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         }
-        // Modify the return statement as needed
         return new Gson().toJson(characters);
     }
 

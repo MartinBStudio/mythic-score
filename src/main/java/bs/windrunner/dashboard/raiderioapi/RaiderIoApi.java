@@ -13,12 +13,16 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 public class RaiderIoApi {
 
     public CharacterModel getEntity(String charName) {
-        return buildModel(charName,getApiResponse(charName));
+        return buildModel(charName, getApiResponse(charName));
+    }
+    public CharacterModel getFakeEntity(String charName) {
+        return buildFakeModel(charName);
     }
 
     private Response getApiResponse(String charName) {
@@ -39,8 +43,8 @@ public class RaiderIoApi {
                 .get();
     }
 
-    private CharacterModel buildModel(String charName,Response response) {
-        if(response.getStatusCode()==200){
+    private CharacterModel buildModel(String charName, Response response) {
+        if (response.getStatusCode() == 200) {
             // Print the response
             System.out.println("Response Code: " + response.getStatusCode());
             System.out.println("Response Body: " + response.getBody().asString());
@@ -58,10 +62,24 @@ public class RaiderIoApi {
                 }
             }
             return CharacterModel.builder().name(name).dungeons(finishedDungeons).build();
-        }
-        else{
+        } else {
             return CharacterModel.builder().name(charName + " character not found on Raider.io").dungeons(List.of()).build();
         }
 
     }
+
+    public CharacterModel buildFakeModel(String charName) {
+        var finishedDungeons = new ArrayList<DungeonModel>();
+        for (int i = 0; i < 10; i++) {
+            String dungeonName = "FakeDungeon";
+            String shortName = "FD";
+            int level = new Random().nextInt(20);
+            finishedDungeons.add(DungeonModel.builder().shortName(shortName).name(dungeonName).finishedKeyLevel(level).build());
+        }
+        return CharacterModel.builder().name(charName).dungeons(finishedDungeons).score(countDungeonScore(finishedDungeons)).build();
+    }
+    private int countDungeonScore(ArrayList<DungeonModel> dungeons){
+        return new Random().nextInt(100);
+    }
+
 }
