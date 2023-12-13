@@ -1,66 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <!-- Your existing head content -->
+
     <!-- Include Google Visualization API Library -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <!--<script th:inline="javascript" type="text/javascript">
-        google.charts.load('current', {'packages':['table']});
-        google.charts.setOnLoadCallback(drawTable);
 
-        function drawTable() {
-            const characterData = JSON.parse(/*[[${characters}]]*/ [])
-            if (!Array.isArray(characterData) || characterData.length === 0) {
-                console.error('Invalid data format.');
-                return;
-            }
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Character Name');
-            data.addColumn('string', 'Dungeons');
-            data.addColumn('string', 'Score');
+    <style>
+        /* Add your existing styles here */
 
-            for (var i = 0; i < characterData.length; i++) {
-                var character = characterData[i];
-                var characterName = character.name;
-                var dungeonInfo="";
-                var score = "0";
-                // Iterate over dungeons
-                for (var j = 0; j < character.dungeons.length; j++) {
-                        var dungeon = character.dungeons[j];
-                        var dungeonName = dungeon.shortName;
-                        var dungeonKey = dungeon.finishedKeyLevel;
-                        dungeonInfo += dungeonName + " " + dungeonKey+", "
-                }
-                data.addRows([
-                    [characterName, dungeonInfo,score]
-                ]);
-            }
-            var table = new google.visualization.Table(document.getElementById('table_div'));
-            table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-    </script>-->
 
+        #container {
+            display: flex;
+            justify-content: space-around;
+        }
 
+        #characterForm {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: left;
+            margin-right: 20px; /* Add margin to create space between form and table */
+            height: 100%; /* Set a fixed height for the form */
+            overflow-y: auto; /* Add scroll if content exceeds the height */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="checkbox"] {
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block; /* Make the button a block element to center it */
+            margin: 0 auto; /* Auto margin to center */
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        #table_div {
+            max-width: 600px; /* Set max-width for the table */
+            width: 100%;
+            height: 100%; /* Set height to 100% to fill the container */
+        }
+    </style>
 </head>
 <body>
-<form id="characterForm">
-    <label for="characterName">Characters Names:</label>
-    <p>Use any valid character names e.g. Ezixis , in case you want use more characters use this format: Ezixis Mehmed
-        Krogzi</p>
-    <p>If you use more names together there is a wait time between each call to not overload Raider.io api so if you ask
-        for 10 names, expected wait time will be 10seconds and so on.</p>
-    <input type="checkbox" id="currentWeekCheckbox"> Previous Week
-    <input type="text" id="characterName" name="characterName" required>
-    <button type="submit">Submit</button>
-</form>
-<div id="table_div"></div>
+
+<div id="container">
+    <form id="characterForm">
+        <label for="characterName">Mythic Score</label>
+        <label>
+            Character Names:
+            <input type="text" id="characterName" name="characterName" required>
+            <div>
+                <ul>
+                    <li>Use any valid character name from Drak-Thul or Burning-Blade.</li>
+                    <li>Add more characters in this format: Martin Petr Libor</li>
+                </ul>
+            </div>
+        </label>
+        <label class="tooltip">
+            <input type="checkbox" id="currentWeekCheckbox"> Previous Week
+        </label>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="table_div"></div>
+</div>
+
 <script th:inline="javascript" type="text/javascript">
     document.getElementById('characterForm').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent the default form submission
 
         const name = document.getElementById('characterName').value;
-        const currentWeek =  !document.getElementById('currentWeekCheckbox').checked;
+        const currentWeek = !document.getElementById('currentWeekCheckbox').checked;
 
-// Fetch data using the submitted character name and current week
+        // Fetch data using the submitted character name and current week
         fetch(`/characters?name=${encodeURIComponent(name)}&currentWeek=${currentWeek}`)
             .then(response => response.json())
             .then(characterData => {
@@ -79,12 +150,14 @@
         }
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Character Name');
+        data.addColumn('string', 'Realm');
         data.addColumn('string', 'TOP 8 Dungeons');
         data.addColumn('string', 'Score');
 
         for (var i = 0; i < characterData.length; i++) {
             var character = characterData[i];
             var characterName = character.name;
+            var characterRealm = character.realm;
             var dungeonInfo = "";
             var score = character.score.toString();
             // Iterate over dungeons
@@ -92,10 +165,10 @@
                 var dungeon = character.dungeons[j];
                 var dungeonName = dungeon.shortName;
                 var dungeonKey = dungeon.finishedKeyLevel;
-                dungeonInfo += dungeonName + " " + dungeonKey + ", "
+                dungeonInfo += dungeonName + " " + dungeonKey + ", ";
             }
             data.addRows([
-                [characterName, dungeonInfo, score]
+                [characterName,characterRealm, dungeonInfo, score]
             ]);
         }
         var table = new google.visualization.Table(document.getElementById('table_div'));
@@ -106,5 +179,6 @@
     google.charts.load('current', {'packages': ['table']});
     google.charts.setOnLoadCallback(drawTable);
 </script>
+
 </body>
 </html>

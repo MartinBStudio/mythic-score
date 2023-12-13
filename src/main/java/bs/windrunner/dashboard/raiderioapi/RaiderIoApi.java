@@ -21,65 +21,77 @@ public class RaiderIoApi {
     private final String currentWeekField = "mythic_plus_weekly_highest_level_runs";
     private final String previousWeekField = "mythic_plus_previous_weekly_highest_level_runs";
 
-    public CharacterModel getEntity(String charName, boolean currentWeek) {
-        return buildModel(charName,currentWeek ,getApiResponse(charName, currentWeek));
+    public List<CharacterModel> getEntity(String charName, boolean currentWeek) {
+        return buildModel(charName, currentWeek, getApiResponse(charName, currentWeek));
     }
 
-    public CharacterModel getFakeEntity(String charName) {
+    public List<CharacterModel> getFakeEntity(String charName) {
         return buildFakeModel(charName);
     }
 
-    private Response getApiResponse(String charName, boolean currentWeek) {
+    private List<Response> getApiResponse(String charName, boolean currentWeek) {
         RestAssured.baseURI = "https://raider.io/api/v1/characters/profile";
 
         // Define the query parameters
         String region = "eu";
         String realm = "drak-thul";
+        String backupRealm = "burning-blade";
         String name = charName;
         String fields = currentWeek ? currentWeekField : previousWeekField;
-
+        var responseList = new ArrayList<Response>();
         // Make the API request
-        return RestAssured.given()
+        responseList.add(RestAssured.given()
                 .queryParam("region", region)
                 .queryParam("realm", realm)
                 .queryParam("name", name)
                 .queryParam("fields", fields)
-                .get();
+                .get());
+        responseList.add(RestAssured.given()
+                .queryParam("region", region)
+                .queryParam("realm", backupRealm)
+                .queryParam("name", name)
+                .queryParam("fields", fields)
+                .get());
+        return responseList;
     }
 
-    private CharacterModel buildModel(String charName,boolean currentWeek, Response response) {
-        if (response.getStatusCode() == 200) {
-            // Print the response
-            System.out.println("Response Code: " + response.getStatusCode());
-            System.out.println("Response Body: " + response.getBody().asString());
-            JsonPath jsonPath = new JsonPath(response.getBody().asString());
-            var name = jsonPath.getString("name");
-            var dungeons = currentWeek?jsonPath.getList(currentWeekField):jsonPath.getList(previousWeekField);
-            var finishedDungeons = new ArrayList<DungeonModel>();
-            for (Object d : dungeons) {
-                if (d instanceof Map) {
-                    Map<String, Object> dungeonMap = (Map<String, Object>) d;
-                    String dungeonName = (String) dungeonMap.get("dungeon");
-                    String shortName = (String) dungeonMap.get("short_name");
-                    int level = (int) dungeonMap.get("mythic_level");
-                    finishedDungeons.add(DungeonModel.builder().shortName(shortName).name(dungeonName).finishedKeyLevel(level).build());
+    private List<CharacterModel> buildModel(String charName, boolean currentWeek, List<Response> responses) {
+        var characters = new ArrayList<CharacterModel>();
+        for(Response r:responses){
+            if (r.getStatusCode() == 200) {
+                // Print the response
+                System.out.println("Response Code: " + r.getStatusCode());
+                System.out.println("Response Body: " + r.getBody().asString());
+                JsonPath jsonPath = new JsonPath(r.getBody().asString());
+                var name = jsonPath.getString("name");
+                var characterClass = jsonPath.getString("class");
+                var characterRealm = jsonPath.getString("realm");
+                var dungeons = currentWeek ? jsonPath.getList(currentWeekField) : jsonPath.getList(previousWeekField);
+                var finishedDungeons = new ArrayList<DungeonModel>();
+                for (Object d : dungeons) {
+                    if (d instanceof Map) {
+                        Map<String, Object> dungeonMap = (Map<String, Object>) d;
+                        String dungeonName = (String) dungeonMap.get("dungeon");
+                        String shortName = (String) dungeonMap.get("short_name");
+                        int level = (int) dungeonMap.get("mythic_level");
+                        finishedDungeons.add(DungeonModel.builder().shortName(shortName).name(dungeonName).finishedKeyLevel(level).build());
+                    }
                 }
+                List<DungeonModel> sortedDungeons = finishedDungeons.stream()
+                        .sorted(Comparator.comparingInt(DungeonModel::getFinishedKeyLevel).reversed())
+                        .toList();
+                // Get the top 8 values
+                List<DungeonModel> top8Dungeons = sortedDungeons.stream()
+                        .limit(8)
+                        .toList();
+                characters.add(CharacterModel.builder().name(name).realm(characterRealm).characterClass(characterClass).dungeons(top8Dungeons).score(countDungeonScore(top8Dungeons)).build());
             }
-            List<DungeonModel> sortedDungeons = finishedDungeons.stream()
-                    .sorted(Comparator.comparingInt(DungeonModel::getFinishedKeyLevel).reversed())
-                    .toList();
-            // Get the top 8 values
-            List<DungeonModel> top8Dungeons = sortedDungeons.stream()
-                    .limit(8)
-                    .toList();
-            return CharacterModel.builder().name(name).dungeons(top8Dungeons).score(countDungeonScore(top8Dungeons)).build();
-        } else {
-            return CharacterModel.builder().name(charName + " character not found on Raider.io").dungeons(List.of()).build();
         }
+return characters;
 
     }
 
-    public CharacterModel buildFakeModel(String charName) {
+    public List<CharacterModel> buildFakeModel(String charName) {
         var finishedDungeons = new ArrayList<DungeonModel>();
         for (int i = 0; i < 8; i++) {
             String dungeonName = "FakeDungeon";
@@ -94,7 +106,7 @@ public class RaiderIoApi {
         List<DungeonModel> top8Dungeons = sortedDungeons.stream()
                 .limit(8)
                 .toList();
-        return CharacterModel.builder().name(charName).dungeons(top8Dungeons).score(countDungeonScore(top8Dungeons)).build();
+        return List.of(CharacterModel.builder().name(charName).dungeons(top8Dungeons).score(countDungeonScore(top8Dungeons)).build());
     }
 
     private int countDungeonScore(List<DungeonModel> dungeons) {

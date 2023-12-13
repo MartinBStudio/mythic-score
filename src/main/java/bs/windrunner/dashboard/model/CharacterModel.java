@@ -10,5 +10,7 @@ import java.util.List;
 public class CharacterModel {
     private String name;
     private List<DungeonModel> dungeons;
-    @Builder.Default private int score =23;
+    private String realm;
+    private String characterClass;
+    @Builder.Default private int score =0;
 }

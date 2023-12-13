@@ -34,7 +34,7 @@ public class WebController {
         List<String> nameList = new ArrayList<>(Arrays.asList(nameArray));
         for (String s : nameList) {
             var characterModel = isDummyMode?raiderIoApi.getFakeEntity(s):raiderIoApi.getEntity(s,currentWeek);
-            characters.add(characterModel);
+            characters.addAll(characterModel);
             Thread.sleep(1000);
         }
         return new Gson().toJson(characters);
