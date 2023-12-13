@@ -18,23 +18,25 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class RaiderIoApi {
+    private final String currentWeekField = "mythic_plus_weekly_highest_level_runs";
+    private final String previousWeekField = "mythic_plus_previous_weekly_highest_level_runs";
 
-    public CharacterModel getEntity(String charName) {
-        return buildModel(charName, getApiResponse(charName));
+    public CharacterModel getEntity(String charName, boolean currentWeek) {
+        return buildModel(charName,currentWeek ,getApiResponse(charName, currentWeek));
     }
 
     public CharacterModel getFakeEntity(String charName) {
         return buildFakeModel(charName);
     }
 
-    private Response getApiResponse(String charName) {
+    private Response getApiResponse(String charName, boolean currentWeek) {
         RestAssured.baseURI = "https://raider.io/api/v1/characters/profile";
 
         // Define the query parameters
         String region = "eu";
         String realm = "drak-thul";
         String name = charName;
-        String fields = "mythic_plus_weekly_highest_level_runs";
+        String fields = currentWeek ? currentWeekField : previousWeekField;
 
         // Make the API request
         return RestAssured.given()
@@ -45,14 +47,14 @@ public class RaiderIoApi {
                 .get();
     }
 
-    private CharacterModel buildModel(String charName, Response response) {
+    private CharacterModel buildModel(String charName,boolean currentWeek, Response response) {
         if (response.getStatusCode() == 200) {
             // Print the response
             System.out.println("Response Code: " + response.getStatusCode());
             System.out.println("Response Body: " + response.getBody().asString());
             JsonPath jsonPath = new JsonPath(response.getBody().asString());
             var name = jsonPath.getString("name");
-            var dungeons = jsonPath.getList("mythic_plus_weekly_highest_level_runs");
+            var dungeons = currentWeek?jsonPath.getList(currentWeekField):jsonPath.getList(previousWeekField);
             var finishedDungeons = new ArrayList<DungeonModel>();
             for (Object d : dungeons) {
                 if (d instanceof Map) {

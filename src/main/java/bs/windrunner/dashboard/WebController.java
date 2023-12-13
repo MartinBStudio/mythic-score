@@ -28,12 +28,12 @@ public class WebController {
     }
     @GetMapping("/characters")
     @ResponseBody
-    public String characters(@RequestParam(name = "name", required = true, defaultValue = "default") String name, Model model) throws InterruptedException {
+    public String characters(@RequestParam(name = "name") String name,@RequestParam(name = "currentWeek") Boolean currentWeek ,Model model) throws InterruptedException {
         var characters = new ArrayList<CharacterModel>();
         String[] nameArray = name.split("\\s+");
         List<String> nameList = new ArrayList<>(Arrays.asList(nameArray));
         for (String s : nameList) {
-            var characterModel = isDummyMode?raiderIoApi.getFakeEntity(s):raiderIoApi.getEntity(s);
+            var characterModel = isDummyMode?raiderIoApi.getFakeEntity(s):raiderIoApi.getEntity(s,currentWeek);
             characters.add(characterModel);
             Thread.sleep(1000);
         }

@@ -44,20 +44,24 @@
 <body>
 <form id="characterForm">
     <label for="characterName">Characters Names:</label>
-    <p>Use any valid character names e.g. Ezixis , in case you want use more characters use this format: Ezixis Mehmed Krogzi</p>
-    <p>If you use more names together there is a wait time between each call to not overload Raider.io api so if you ask for 10 names, expected wait time will be 10seconds and so on.</p>
+    <p>Use any valid character names e.g. Ezixis , in case you want use more characters use this format: Ezixis Mehmed
+        Krogzi</p>
+    <p>If you use more names together there is a wait time between each call to not overload Raider.io api so if you ask
+        for 10 names, expected wait time will be 10seconds and so on.</p>
+    <input type="checkbox" id="currentWeekCheckbox"> Previous Week
     <input type="text" id="characterName" name="characterName" required>
     <button type="submit">Submit</button>
 </form>
 <div id="table_div"></div>
 <script th:inline="javascript" type="text/javascript">
-    document.getElementById('characterForm').addEventListener('submit', function(event) {
+    document.getElementById('characterForm').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent the default form submission
 
         const name = document.getElementById('characterName').value;
+        const currentWeek =  !document.getElementById('currentWeekCheckbox').checked;
 
-        // Fetch data using the submitted character name
-        fetch('/characters?name=' + encodeURIComponent(name))
+// Fetch data using the submitted character name and current week
+        fetch(`/characters?name=${encodeURIComponent(name)}&currentWeek=${currentWeek}`)
             .then(response => response.json())
             .then(characterData => {
                 // Call drawTable with the retrieved data
