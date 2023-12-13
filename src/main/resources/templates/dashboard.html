@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Include Google Visualization API Library -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!--<script th:inline="javascript" type="text/javascript">
+        google.charts.load('current', {'packages':['table']});
+        google.charts.setOnLoadCallback(drawTable);
+
+        function drawTable() {
+            const characterData = JSON.parse(/*[[${characters}]]*/ [])
+            if (!Array.isArray(characterData) || characterData.length === 0) {
+                console.error('Invalid data format.');
+                return;
+            }
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Character Name');
+            data.addColumn('string', 'Dungeons');
+            data.addColumn('string', 'Score');
+
+            for (var i = 0; i < characterData.length; i++) {
+                var character = characterData[i];
+                var characterName = character.name;
+                var dungeonInfo="";
+                var score = "0";
+                // Iterate over dungeons
+                for (var j = 0; j < character.dungeons.length; j++) {
+                        var dungeon = character.dungeons[j];
+                        var dungeonName = dungeon.shortName;
+                        var dungeonKey = dungeon.finishedKeyLevel;
+                        dungeonInfo += dungeonName + " " + dungeonKey+", "
+                }
+                data.addRows([
+                    [characterName, dungeonInfo,score]
+                ]);
+            }
+            var table = new google.visualization.Table(document.getElementById('table_div'));
+            table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+        }
+    </script>-->
+
+
+</head>
+<body>
+<form id="characterForm">
+    <label for="characterName">Character Name:</label>
+    <input type="text" id="characterName" name="characterName" required>
+    <button type="submit">Submit</button>
+</form>
+<div id="table_div"></div>
+<script th:inline="javascript" type="text/javascript">
+    document.getElementById('characterForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const name = document.getElementById('characterName').value;
+
+        // Fetch data using the submitted character name
+        fetch('/characters?name=' + encodeURIComponent(name))
+            .then(response => response.json())
+            .then(characterData => {
+                // Call drawTable with the retrieved data
+                drawTable(characterData);
+            })
+            .catch(error => {
+                console.error('Error fetching character data:', error);
+            });
+    });
+
+    function drawTable(characterData) {
+        if (!Array.isArray(characterData) || characterData.length === 0) {
+            console.error('Invalid data format.');
+            return;
+        }
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Character Name');
+        data.addColumn('string', 'Dungeons');
+        data.addColumn('string', 'Score');
+
+        for (var i = 0; i < characterData.length; i++) {
+            var character = characterData[i];
+            var characterName = character.name;
+            var dungeonInfo = "";
+            var score = "0";
+            // Iterate over dungeons
+            for (var j = 0; j < character.dungeons.length; j++) {
+                var dungeon = character.dungeons[j];
+                var dungeonName = dungeon.shortName;
+                var dungeonKey = dungeon.finishedKeyLevel;
+                dungeonInfo += dungeonName + " " + dungeonKey + ", "
+            }
+            data.addRows([
+                [characterName, dungeonInfo, score]
+            ]);
+        }
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+        table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+    }
+
+    // Load Google Charts API
+    google.charts.load('current', {'packages': ['table']});
+    google.charts.setOnLoadCallback(drawTable);
+</script>
+</body>
+</html>
