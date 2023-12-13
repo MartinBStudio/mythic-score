@@ -23,17 +23,18 @@ public class WebController {
     private final boolean isDummyMode = false;
 
     @GetMapping("/dashboard")
-    public String greeting(){
+    public String greeting() {
         return "dashboard";
     }
+
     @GetMapping("/characters")
     @ResponseBody
-    public String characters(@RequestParam(name = "name") String name,@RequestParam(name = "currentWeek") Boolean currentWeek ,Model model) throws InterruptedException {
+    public String characters(@RequestParam(name = "name") String name, @RequestParam(name = "currentWeek") Boolean currentWeek, Model model) throws InterruptedException {
         var characters = new ArrayList<CharacterModel>();
         String[] nameArray = name.split("\\s+");
         List<String> nameList = new ArrayList<>(Arrays.asList(nameArray));
         for (String s : nameList) {
-            var characterModel = isDummyMode?raiderIoApi.getFakeEntity(s):raiderIoApi.getEntity(s,currentWeek);
+            var characterModel = isDummyMode ? raiderIoApi.getFakeEntity(s) : raiderIoApi.getEntity(s, currentWeek);
             characters.addAll(characterModel);
             Thread.sleep(1000);
         }
