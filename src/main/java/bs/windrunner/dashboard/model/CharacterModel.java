@@ -12,5 +12,8 @@ public class CharacterModel {
     private List<DungeonModel> dungeons;
     private String realm;
     private String characterClass;
-    @Builder.Default private int score =0;
+    @Builder.Default private int totalScore =0;
+    @Builder.Default private int tierOneScore =0;
+    @Builder.Default private int tierFourScore =0;
+    @Builder.Default private int tierEightScore =0;
 }

@@ -5,102 +5,119 @@ import bs.windrunner.dashboard.model.DungeonModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
 public class Utils {
 
-    public int countDungeonScore(List<DungeonModel> dungeons) {
-        int biggerOrEqualTwenty = 0;
-        int betweenEighteenAndTwenty = 0;
-        int betweenTenAndSeventeen = 0;
-        int betweenTwoAndNine = 0;
-        // Sorting the list in descending order based on finishedKeyLevel
 
-        for (DungeonModel d : dungeons) {
-            var keyLevel = d.getFinishedKeyLevel();
 
-            if (keyLevel >= 20) {
-                biggerOrEqualTwenty++;
-            } else if (keyLevel >= 18) {
-                betweenEighteenAndTwenty++;
-            } else if (keyLevel >= 10) {
-                betweenTenAndSeventeen++;
-            } else if (keyLevel >= 2) {
-                betweenTwoAndNine++;
+    private int countTierOne(List<DungeonModel> dungeons) {
+        if (dungeons.size() >= 1) {
+            List<Integer> numbers = new ArrayList<>();
+            for (DungeonModel d : dungeons) {
+                numbers.add(d.getFinishedKeyLevel());
+            }
+            return countPointsForNumber(findHighestNumber(numbers));
+        }
+        return 0;
+    }
+    private int findLowestNumber(List<Integer> numbers) {
+        if (numbers == null || numbers.isEmpty()) {
+            throw new IllegalArgumentException("List must not be empty");
+        }
+
+        int min = numbers.get(0);
+        for (int number : numbers) {
+            if (number < min) {
+                min = number;
             }
         }
+        return min;
+    }
+    private  int findHighestNumber(List<Integer> numbers) {
+        if (numbers == null || numbers.isEmpty()) {
+            throw new IllegalArgumentException("List must not be empty");
+        }
 
-        var sumCore = 0;
+        int max = numbers.get(0);
+        for (int number : numbers) {
+            if (number > max) {
+                max = number;
+            }
+        }
+        return max;
+    }
+    private int countPointsForNumber(int number){
 
-        //20
-        log.info("20:{}", biggerOrEqualTwenty);
-        var twentyScore = 0;
-        if (biggerOrEqualTwenty >= 8) {
-            twentyScore = 120;
-        } else if (biggerOrEqualTwenty >= 4) {
-            twentyScore = 80;
-        } else if (biggerOrEqualTwenty >= 1) {
-            twentyScore = 40;
+            if (number >= 20) {
+                return 40;
+            } else if (number >= 18) {
+                return 30;
+            } else if (number >= 10) {
+                return 20;
+            } else if (number >= 2) {
+                return 10;
+            }
+
+        return 0;
+    }
+
+    private int countTierFour(List<DungeonModel> dungeons) {
+        if (dungeons.size() >= 4) {
+            List<Integer> numbers = new ArrayList<>();
+            for (DungeonModel d : dungeons) {
+                numbers.add(d.getFinishedKeyLevel());
+            }
+            Collections.sort(numbers,Collections.reverseOrder());
+            List<Integer> fourHighestNumbers = numbers.subList(0, Math.min(numbers.size(), 4));
+            return countPointsForNumber(findLowestNumber(fourHighestNumbers));
         }
-        log.info("20 - count {} score:{}", biggerOrEqualTwenty, twentyScore);
-        sumCore += twentyScore;
-        //18
-        var eighteenScore = 0;
-        if (betweenEighteenAndTwenty >= 8) {
-            eighteenScore += 90;
-        } else if (betweenEighteenAndTwenty >= 4) {
-            eighteenScore += 60;
-        } else if (betweenEighteenAndTwenty >= 1) {
-            eighteenScore += 30;
+        return 0;
+    }
+
+    private int countTierEight(List<DungeonModel> dungeons) {
+        if (dungeons.size() >= 8) {
+            List<Integer> numbers = new ArrayList<>();
+            for (DungeonModel d : dungeons) {
+                numbers.add(d.getFinishedKeyLevel());
+            }
+            Collections.sort(numbers,Collections.reverseOrder());
+            List<Integer> fourHighestNumbers = numbers.subList(0, Math.min(numbers.size(), 8));
+            Collections.sort(fourHighestNumbers);
+            return countPointsForNumber(findLowestNumber(fourHighestNumbers));
         }
-        log.info("18-19 - count {} score:{}", betweenEighteenAndTwenty, eighteenScore);
-        sumCore += eighteenScore;
-        //10
-        var tenScore = 0;
-        if (betweenTenAndSeventeen >= 8) {
-            tenScore += 60;
-        } else if (betweenTenAndSeventeen >= 4) {
-            tenScore += 40;
-        } else if (betweenTenAndSeventeen >= 1) {
-            tenScore += 20;
-        }
-        log.info("10-17 - count {} score:{}", betweenTenAndSeventeen, tenScore);
-        sumCore += tenScore;
-        //2
-        var twoScore = 0;
-        if (betweenTwoAndNine >= 8) {
-            twoScore += 30;
-        } else if (betweenTwoAndNine >= 4) {
-            twoScore += 20;
-        } else if (betweenTwoAndNine >= 1) {
-            twoScore += 10;
-        }
-        log.info("2-9 - count {} score:{}", betweenTwoAndNine, twoScore);
-        sumCore += twoScore;
-        return sumCore;
+        return 0;
     }
 
     public List<String> formatNamesParam(String names) {
         String[] nameArray = names.split("\\s+");
         return new ArrayList<>(Arrays.asList(nameArray));
     }
-    public CharacterModel buildCharacter(List<DungeonModel> finishedDungeons,String name,String characterRealm,String characterClass){
+
+    public CharacterModel buildCharacter(List<DungeonModel> finishedDungeons, String name, String characterRealm, String characterClass) {
         List<DungeonModel> top8Dungeons = finishedDungeons.stream()
                 .sorted(Comparator.comparingInt(DungeonModel::getFinishedKeyLevel).reversed())
                 .toList().stream()
                 .limit(8)
                 .toList();
+
+        var tierOne = countTierOne(top8Dungeons);
+        var tierFour = countTierFour(top8Dungeons);
+        var tierEight = countTierEight(top8Dungeons);
+        var total = tierOne + tierFour + tierEight;
+
+
         return CharacterModel.builder()
                 .name(name)
                 .realm(characterRealm)
                 .characterClass(characterClass)
                 .dungeons(top8Dungeons)
-                .score(countDungeonScore(top8Dungeons))
+                .tierOneScore(tierOne)
+                .tierFourScore(tierFour)
+                .tierEightScore(tierEight)
+                .totalScore(total)
                 .build();
     }
 }
