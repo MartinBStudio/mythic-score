@@ -8,6 +8,7 @@ import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 @SuppressWarnings("unchecked")
 public class RaiderIoComponent {
     private final Utils utils;
@@ -25,6 +27,7 @@ public class RaiderIoComponent {
 
     public String getData(String namesParam, boolean currentWeek) throws InterruptedException {
         List<String> nameList = utils.formatNamesParam(namesParam);
+        var notFoundCharacters = new ArrayList<CharacterModel>();
         var characters = new ArrayList<CharacterModel>();
         for (String s : nameList) {
             RestAssured.baseURI = "https://raider.io/api/v1/characters/profile";
@@ -48,15 +51,29 @@ public class RaiderIoComponent {
                     .queryParam("name", s)
                     .queryParam("fields", fields)
                     .get());
-            for (Response r : responseList) {
-                if (r.getStatusCode() == 200) {
+            if(checkIfBothRequestsFailed(responseList)){
+                notFoundCharacters.add(utils.buildCharacter(List.of(DungeonModel.builder().shortName("Character not found.").build()),s,"",""));
+            }
+            else{
+                for (Response r : responseList) {
                     JsonPath jsonPath = new JsonPath(r.getBody().asString());
-                    characters.add(processResponseJson(jsonPath, currentWeek));
+                    if (r.getStatusCode() == 200) {
+                        characters.add(processResponseJson(jsonPath, currentWeek));
+                    }
                 }
             }
             Thread.sleep(100);
         }
+        characters.addAll(notFoundCharacters);
         return new Gson().toJson(characters);
+    }
+    private boolean checkIfBothRequestsFailed(List<Response> list) {
+        for (Response item : list) {
+            if (item.statusCode()!=400) {
+                return false;
+            }
+        }
+        return true;
     }
     private CharacterModel processResponseJson(JsonPath jsonPath, boolean currentWeek) {
         final String currentWeekField = "mythic_plus_weekly_highest_level_runs";
