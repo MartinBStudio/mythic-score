@@ -3,7 +3,6 @@ plugins {
     id 'org.springframework.boot' version '3.2.0'
     id 'io.spring.dependency-management' version '1.1.4'
 }
-
 group = 'bs.windrunner'
 version = '0.0.1-SNAPSHOT'
 
@@ -26,14 +25,21 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation"org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-web"
     implementation 'io.rest-assured:rest-assured:5.4.0'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'com.google.code.gson:gson:2.10.1'
-
-
+    testImplementation 'org.testng:testng:7.7.0'
+    implementation 'com.google.googlejavaformat:google-java-format:1.18.1'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+test {
+    test {
+        useTestNG() {
+            suites("src/test/resources/DefaultSuite.xml")
+        }
+        testLogging {
+            events "PASSED", "FAILED", "SKIPPED"
+        }
+    }
 }

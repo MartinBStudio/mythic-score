@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="DefaultTestSuite">
+    <test name="DefaultTestSuite">
+        <classes>
+            <class name="bs.windrunner.dashboard.WdApplicationTests"/>
+        </classes>
+    </test>
+</suite>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Your existing head content -->
 
@@ -22,6 +23,7 @@
         #container {
             display: flex;
             justify-content: space-around;
+            width: 100%; /* Add width to the container to fill the entire space */
         }
 
         #characterForm {
@@ -33,8 +35,7 @@
             width: 100%;
             text-align: left;
             margin-right: 20px; /* Add margin to create space between form and table */
-            height: 100%; /* Set a fixed height for the form */
-            overflow-y: auto; /* Add scroll if content exceeds the height */
+            box-sizing: border-box; /* Ensure padding and border are included in the total width */
         }
 
         label {
@@ -101,6 +102,7 @@
         }
     </style>
 </head>
+
 <body>
 
 <div id="container">
@@ -116,9 +118,14 @@
                 </ul>
             </div>
         </label>
-        <label class="tooltip">
-            <input type="checkbox" id="currentWeekCheckbox"> Previous Week
-        </label>
+        <div class="checkbox-group">
+            <label class="tooltip">
+                <input type="checkbox" id="currentWeekCheckbox"> Previous Week
+            </label>
+            <label class="tooltip">
+                <input type="checkbox" id="dummyModeCheckbox"> Dummy Mode
+            </label>
+        </div>
         <button type="submit">Submit</button>
     </form>
     <div id="table_div"></div>
@@ -130,9 +137,10 @@
 
         const name = document.getElementById('characterName').value;
         const currentWeek = !document.getElementById('currentWeekCheckbox').checked;
+        const dummyMode = document.getElementById('dummyModeCheckbox').checked;
 
         // Fetch data using the submitted character name and current week
-        fetch(`/characters?name=${encodeURIComponent(name)}&currentWeek=${currentWeek}`)
+        fetch(`/characters?name=${encodeURIComponent(name)}&currentWeek=${currentWeek}&dummyMode=${dummyMode}`)
             .then(response => response.json())
             .then(characterData => {
                 // Call drawTable with the retrieved data
@@ -168,17 +176,18 @@
                 dungeonInfo += dungeonName + " " + dungeonKey + ", ";
             }
             data.addRows([
-                [characterName,characterRealm, dungeonInfo, score]
+                [characterName, characterRealm, dungeonInfo, score]
             ]);
         }
         var table = new google.visualization.Table(document.getElementById('table_div'));
-        table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+        table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
     }
 
     // Load Google Charts API
-    google.charts.load('current', {'packages': ['table']});
+    google.charts.load('current', { 'packages': ['table'] });
     google.charts.setOnLoadCallback(drawTable);
 </script>
 
 </body>
+
 </html>
