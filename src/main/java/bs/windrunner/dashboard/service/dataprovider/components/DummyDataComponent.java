@@ -8,28 +8,43 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class DummyDataComponent {
     private final Utils utils;
-    public String getData(String charName) {
-        var finishedDungeons = new ArrayList<DungeonModel>();
-        for (int i = 0; i < 8; i++) {
-            String dungeonName = "FakeDungeon";
-            String shortName = "FD";
-            int level = i == 0 || i == 1 || i == 2 || i == 3 || i == 4 ? 20 : 2;
-            finishedDungeons.add(DungeonModel.builder().shortName(shortName).name(dungeonName).finishedKeyLevel(level).build());
+    public String getData() {
+        List<String> nameList = utils.formatNamesParam(generateRandomStringWithNames());
+        var characters = new ArrayList<CharacterModel>();
+        for (String s : nameList) {
+          characters.add(utils.buildCharacter(generateRandomDungeons(),s,"Realm","Class"));
         }
-        List<DungeonModel> sortedDungeons = finishedDungeons.stream()
-                .sorted(Comparator.comparingInt(DungeonModel::getFinishedKeyLevel).reversed())
-                .toList();
-        // Get the top 8 values
-        List<DungeonModel> top8Dungeons = sortedDungeons.stream()
-                .limit(8)
-                .toList();
-        return new Gson().toJson(List.of(CharacterModel.builder().name(charName).dungeons(top8Dungeons).score(utils.countDungeonScore(top8Dungeons)).build()));
+        return new Gson().toJson(characters);
+    }
+    private  String generateRandomStringWithNames() {
+        String[] names = {"Illidan", "Nefarian", "Kel'Thuzad", "Arthas", "Onyxia", "Fyrrak", "Kil'jaeden"};
+        Random random = new Random();
+        StringBuilder result = new StringBuilder();
+        var randomLength = random.nextInt((300 - 10) + 1) + 10;
+
+        while (result.length() < randomLength) {
+            if (!result.isEmpty()) {
+                result.append(" ");
+            }
+
+            String randomName = names[random.nextInt(names.length)];
+            result.append(randomName);
+        }
+        return result.substring(0, Math.min(result.length(), randomLength));
+    }
+    private List<DungeonModel> generateRandomDungeons(){
+        var randomDungeonCount = new Random().nextInt(16);
+        var dungeons = new ArrayList<DungeonModel>();
+        for (int i = 0; i <= randomDungeonCount; i++) {
+            dungeons.add(DungeonModel.builder().name("FakeDungeon").shortName("FD").finishedKeyLevel(new Random().nextInt(21)).build());
+        }
+        return dungeons;
     }
 }

@@ -1,9 +1,13 @@
 package bs.windrunner.dashboard.service.utils;
 
+import bs.windrunner.dashboard.model.CharacterModel;
 import bs.windrunner.dashboard.model.DungeonModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -79,5 +83,24 @@ public class Utils {
         log.info("2-9 - count {} score:{}", betweenTwoAndNine, twoScore);
         sumCore += twoScore;
         return sumCore;
+    }
+
+    public List<String> formatNamesParam(String names) {
+        String[] nameArray = names.split("\\s+");
+        return new ArrayList<>(Arrays.asList(nameArray));
+    }
+    public CharacterModel buildCharacter(List<DungeonModel> finishedDungeons,String name,String characterRealm,String characterClass){
+        List<DungeonModel> top8Dungeons = finishedDungeons.stream()
+                .sorted(Comparator.comparingInt(DungeonModel::getFinishedKeyLevel).reversed())
+                .toList().stream()
+                .limit(8)
+                .toList();
+        return CharacterModel.builder()
+                .name(name)
+                .realm(characterRealm)
+                .characterClass(characterClass)
+                .dungeons(top8Dungeons)
+                .score(countDungeonScore(top8Dungeons))
+                .build();
     }
 }

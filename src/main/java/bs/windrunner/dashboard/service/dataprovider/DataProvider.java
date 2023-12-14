@@ -13,8 +13,7 @@ public class DataProvider {
     private final DummyDataComponent dummyDataComponent;
     private final RaiderIoComponent raiderIoComponent;
 
-    public String provedeJsonStringData(String name, boolean isDummyMode, boolean isCurrentWeek) throws InterruptedException {
-        return !isDummyMode?raiderIoComponent.getData(name, isCurrentWeek): dummyDataComponent.getData(name);
+    public String provideJsonStringData(String name, boolean isDummyMode, boolean isCurrentWeek) throws InterruptedException {
+        return isDummyMode ? dummyDataComponent.getData() : raiderIoComponent.getData(name, isCurrentWeek);
     }
-
 }

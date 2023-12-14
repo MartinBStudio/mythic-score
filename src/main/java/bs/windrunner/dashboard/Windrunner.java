@@ -5,9 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Slf4j
 @SpringBootApplication
-public class WdApplication {
+public class Windrunner {
     public static void main(String[] args) {
-        SpringApplication.run(WdApplication.class, args);
+        SpringApplication.run(Windrunner.class, args);
     }
 
 }

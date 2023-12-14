@@ -2,7 +2,7 @@
 <suite name="DefaultTestSuite">
     <test name="DefaultTestSuite">
         <classes>
-            <class name="bs.windrunner.dashboard.WdApplicationTests"/>
+            <class name="bs.windrunner.dashboard.WindRunnerTests"/>
         </classes>
     </test>
 </suite>

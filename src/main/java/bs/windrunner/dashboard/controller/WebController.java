@@ -1,4 +1,4 @@
-package bs.windrunner.dashboard;
+package bs.windrunner.dashboard.controller;
 
 import bs.windrunner.dashboard.service.dataprovider.DataProvider;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +23,7 @@ public class WebController {
     @GetMapping("/characters")
     @ResponseBody
     public String characters(@RequestParam(name = "name") String name, @RequestParam(name = "currentWeek") Boolean currentWeek,@RequestParam(name = "dummyMode") Boolean isDummyMode, Model model) throws InterruptedException {
-       log.info(String.valueOf(isDummyMode));
-        return dataProvider.provedeJsonStringData(name, isDummyMode, currentWeek);
+        return dataProvider.provideJsonStringData(name, isDummyMode, currentWeek);
     }
 
 }
