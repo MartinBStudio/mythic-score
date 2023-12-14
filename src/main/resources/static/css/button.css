@@ -1,0 +1,54 @@
+.button {
+    --button-bg: #700200;
+    --button-bg-hover: #700200;
+    --button-border-color: #515151;
+    --button-border-color-hover: #515151;
+    --button-border-radius: .5rem;
+    --button-box-shadow: none;
+    --button-box-shadow-hover: none;
+    --button-color: #cda000;
+    --button-color-hover: #cda000;
+    --button-disabled-bg: #dee2e6;
+    --button-disabled-border-color: #6c757d;
+    --button-disabled-color: #6c757d;
+    --button-font-size: 1.6rem;
+    --button-padding-x: 1.5rem;
+    --button-padding-y: .75rem;
+
+    align-items: center;
+    background-color: var(--button-bg);
+    border-color: var(--button-border-color);
+    border-radius: var(--button-border-radius);
+    border-style: solid;
+    border-width: .1rem;
+    box-shadow: var(--button-box-shadow);
+    color: var(--button-color);
+    display: inline-flex;
+    font-size: var(--button-font-size);
+    gap: 1rem;
+    justify-content: center;
+    margin: 0;
+    outline: none;
+    padding-block: var(--button-padding-y);
+    padding-inline: var(--button-padding-x);
+    text-decoration: none;
+    transition: all .2s ease-in-out;
+    user-select: none;
+}
+
+.button:hover,
+.button:focus {
+    background-color: var(--button-bg-hover);
+    border-color: var(--button-border-color-hover);
+    box-shadow: var(--button-box-shadow-hover);
+    color: var(--button-color-hover);
+    text-decoration: none;
+}
+
+.button:disabled {
+    color: var(--button-disabled-color);
+    background-color: var(--button-disabled-bg);
+    border-color: var(--button-disabled-border-color);
+    cursor: not-allowed;
+    pointer-events: none;
+}

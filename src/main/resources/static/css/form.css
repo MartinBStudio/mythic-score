@@ -1,0 +1,40 @@
+.form {
+    align-items: center;
+    color: #cda000;
+    display: flex;
+    flex-direction: column;
+    font-size: 2rem;
+    gap: 2.5rem;
+    margin-block-start: 3rem;
+    text-shadow: .2rem .2rem .1rem #000;
+}
+
+.form__inputContainer {
+    display: flex;
+    flex-direction: column;
+
+    & input {
+        background: rgba(0, 0, 0, .8);
+        border: .1rem solid #515151;
+        color: #fff;
+        height: 3.5rem;
+        padding-inline: 1rem;
+    }
+
+    & label {
+        text-align: center;
+    }
+}
+
+.form__checkboxContainer {
+    display: flex;
+    gap: .5rem;
+
+    & input {
+        order: -1;
+    }
+
+    & label {
+        cursor: pointer;
+    }
+}

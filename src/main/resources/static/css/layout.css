@@ -1,0 +1,33 @@
+.page-container {
+    align-items: center;
+    block-size: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+}
+
+@media (min-width: 48em) {
+    .page-container {
+        max-inline-size: 72rem;
+    }
+}
+
+@media (min-width: 62em) {
+    .page-container {
+        max-inline-size: 96rem;
+    }
+}
+
+@media (min-width: 75em) {
+    .page-container {
+        max-inline-size: 114rem;
+    }
+}
+
+@media (min-width: 87.5em) {
+    .page-container {
+        max-inline-size: 132rem;
+    }
+}

@@ -1,0 +1,29 @@
+.loader-container {
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    block-size: 100%;
+    display: none;
+    inline-size: 100%;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    justify-content: center;
+    position: fixed;
+}
+
+.loader {
+    animation: spin 1s linear infinite;
+    border: .8rem solid #515151;
+    border-radius: 50%;
+    border-top: .8rem solid #cda000;
+    block-size: 5rem;
+    inline-size: 5rem;
+}
+
+@keyframes spin {
+    0% {
+        rotate: 0deg;
+    }
+    100% {
+        rotate: 360deg;
+    }
+}

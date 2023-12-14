@@ -1,0 +1,50 @@
+html {
+    font-size: 62.5%;
+}
+
+html:focus-visible {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #262626;
+    background-image: url('../img/loginScreen.jpg');
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    block-size: 100vh;
+    color: #fff;
+    direction: ltr;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.5;
+    overflow-x: hidden;
+    position: relative;
+    writing-mode: horizontal-tb;
+}
+
+body::before {
+    background-color: rgba(0, 0, 0, .6);
+    block-size: 100%;
+    content: "";
+    display: block;
+    inline-size: 100%;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+}
+
+img {
+    block-size: auto;
+    max-inline-size: 100%;
+    vertical-align: middle;
+}
+
+button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+}

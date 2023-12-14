@@ -1,0 +1,16 @@
+.welcome {
+    text-align: center;
+}
+
+.welcome__heading {
+
+}
+
+.welcome__list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.welcome__item {
+}

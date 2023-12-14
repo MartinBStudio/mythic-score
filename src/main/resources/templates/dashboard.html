@@ -1,193 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="cs">
 <head>
-    <!-- Your existing head content -->
-
-    <!-- Include Google Visualization API Library -->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-    <style>
-        /* Add your existing styles here */
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        #container {
-            display: flex;
-            justify-content: space-around;
-            width: 100%; /* Add width to the container to fill the entire space */
-        }
-
-        #characterForm {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
-            text-align: left;
-            margin-right: 20px; /* Add margin to create space between form and table */
-            box-sizing: border-box; /* Ensure padding and border are included in the total width */
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        input[type="checkbox"] {
-            margin-bottom: 15px;
-        }
-
-        button {
-            background-color: #4caf50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            display: block; /* Make the button a block element to center it */
-            margin: 0 auto; /* Auto margin to center */
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-
-        .tooltip .tooltip-text {
-            visibility: hidden;
-            width: 200px;
-            background-color: #555;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 10px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -100px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        #table_div {
-            max-width: 600px; /* Set max-width for the table */
-            width: 100%;
-            height: 100%; /* Set height to 100% to fill the container */
-        }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>M+ nástěnka - Windrunners cult</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/modern-normalize.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/general.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/typography.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/layout.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/button.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/form.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/welcome.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/modal.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/loader.css}"/>
 </head>
+<body id="body">
+<div class="page-container">
+    <main>
+        <section class="welcome">
+            <h1 class="welcome__heading">M+ nástěnka</h1>
+            <ul class="welcome__list">
+                <li class="welcome__item">Použij jakékoliv jméno ze server Drak-Thul nebo Burning-Blade</li>
+                <li class="welcome__item">Pro zadání více jmen použij mezeru, například: Martin Petr Libor</li>
+            </ul>
+        </section>
 
-<body>
-
-<div id="container">
-    <form id="characterForm">
-        <label for="characterName">Mythic Score</label>
-        <label>
-            Character Names:
-            <input type="text" id="characterName" name="characterName" required>
-            <div>
-                <ul>
-                    <li>Use any valid character name from Drak-Thul or Burning-Blade.</li>
-                    <li>Add more characters in this format: Martin Petr Libor</li>
-                </ul>
+        <form id="characterForm" class="form">
+            <div class="form__inputContainer">
+                <label for="characterName">Jméno hráče</label>
+                <input type="text" id="characterName" name="characterName" required>
             </div>
-        </label>
-        <div class="checkbox-group">
-            <label class="tooltip">
-                <input type="checkbox" id="currentWeekCheckbox"> Previous Week
-            </label>
-            <label class="tooltip">
-                <input type="checkbox" id="dummyModeCheckbox"> Dummy Mode
-            </label>
-        </div>
-        <button type="submit">Submit</button>
-    </form>
-    <div id="table_div"></div>
+            <button class="button" type="submit" id="submit">Potvrdit</button>
+            <div class="form__checkboxContainer">
+                <label for="prevWeek">Předchozí týden</label>
+                <input type="checkbox" id="prevWeek">
+            </div>
+        </form>
+    </main>
 </div>
 
-<script th:inline="javascript" type="text/javascript">
-    document.getElementById('characterForm').addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent the default form submission
+<dialog id="modal" class="modal">
+    <button id="modalClose" class="modal__close">X</button>
+    <section class="modal__content">
+        <h2 class="modal__heading">Data</h2>
+        <div id="table_div"></div>
+    </section>
+</dialog>
 
-        const name = document.getElementById('characterName').value;
-        const currentWeek = !document.getElementById('currentWeekCheckbox').checked;
-        const dummyMode = document.getElementById('dummyModeCheckbox').checked;
-
-        // Fetch data using the submitted character name and current week
-        fetch(`/characters?name=${encodeURIComponent(name)}&currentWeek=${currentWeek}&dummyMode=${dummyMode}`)
-            .then(response => response.json())
-            .then(characterData => {
-                // Call drawTable with the retrieved data
-                drawTable(characterData);
-            })
-            .catch(error => {
-                console.error('Error fetching character data:', error);
-            });
-    });
-
-    function drawTable(characterData) {
-        if (!Array.isArray(characterData) || characterData.length === 0) {
-            console.error('Invalid data format.');
-            return;
-        }
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Character Name');
-        data.addColumn('string', 'Realm');
-        data.addColumn('string', 'TOP 8 Dungeons');
-        data.addColumn('string', 'Score');
-
-        for (var i = 0; i < characterData.length; i++) {
-            var character = characterData[i];
-            var characterName = character.name;
-            var characterRealm = character.realm;
-            var dungeonInfo = "";
-            var score = character.score.toString();
-            // Iterate over dungeons
-            for (var j = 0; j < character.dungeons.length; j++) {
-                var dungeon = character.dungeons[j];
-                var dungeonName = dungeon.shortName;
-                var dungeonKey = dungeon.finishedKeyLevel;
-                dungeonInfo += dungeonName + " " + dungeonKey + ", ";
-            }
-            data.addRows([
-                [characterName, characterRealm, dungeonInfo, score]
-            ]);
-        }
-        var table = new google.visualization.Table(document.getElementById('table_div'));
-        table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
-    }
-
-    // Load Google Charts API
-    google.charts.load('current', { 'packages': ['table'] });
-    google.charts.setOnLoadCallback(drawTable);
-</script>
-
+<div id="loaderContainer" class="loader-container">
+    <div class="loader"></div>
+</div>
+<script type="text/javascript" th:src="@{/js/index.js}"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </body>
-
 </html>
