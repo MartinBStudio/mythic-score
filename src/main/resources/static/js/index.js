@@ -65,15 +65,17 @@ const formSubmitHandler = () => {
     const submitButton = document.getElementById('submit');
     const nameInput = document.getElementById('characterName');
     const prevWeekCheckbox = document.getElementById('prevWeek');
+    const dummyModeCheckbox = document.getElementById('dummyMode');
 
     form.addEventListener('submit', (event) => {
         event.preventDefault();
         const name = nameInput.value;
         const currentWeek = !prevWeekCheckbox.checked;
+        const dummyMode = dummyModeCheckbox.checked;
         submitButton.disabled = true;
         showLoader();
 
-        fetch(`/characters?name=${name}&currentWeek=${currentWeek}`)
+        fetch(`/characters?name=${name}&currentWeek=${currentWeek}&dummyMode=${dummyMode}`)
             .then(response => response.json())
             .then((characterData) => {
                 hideLoader();
