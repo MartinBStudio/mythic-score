@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class WebController {
     private final DataProvider dataProvider;
 
-    @GetMapping("/dashboard")
-    public String greeting() {
-        return "dashboard";
+    @GetMapping({"dashboard", "","/"})
+    public String home() {
+     return "dashboard";
     }
 
     @GetMapping("/characters")

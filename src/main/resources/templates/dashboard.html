@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>M+ nástěnka - Windrunners cult</title>
+    <title>M+ Vault score</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/modern-normalize.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/general.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/typography.css}"/>
@@ -14,21 +14,22 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/welcome.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/modal.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/loader.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/footer.css}"/>
 </head>
 <body id="body">
 <div class="page-container">
     <main>
         <section class="welcome">
-            <h1 class="welcome__heading">M+ nástěnka</h1>
+            <h1 class="welcome__heading">M+ Vault score</h1>
             <ul class="welcome__list">
-                <li class="welcome__item">Použij jakékoliv jméno ze server Drak-Thul nebo Burning-Blade</li>
+                <li class="welcome__item">Použij jakékoliv jméno ze serveru Drak-Thul nebo Burning-Blade</li>
                 <li class="welcome__item">Pro zadání více jmen použij mezeru, například: Martin Petr Libor</li>
             </ul>
         </section>
 
         <form id="characterForm" class="form">
             <div class="form__inputContainer">
-                <label for="characterName">Jméno hráče</label>
+                <label for="characterName">Jméno postavy</label>
                 <input type="text" id="characterName" name="characterName" required>
             </div>
             <button class="button" type="submit" id="submit">Potvrdit</button>
@@ -36,11 +37,15 @@
                 <label for="prevWeek">Předchozí týden</label>
                 <input type="checkbox" id="prevWeek">
             </div>
+        </form>
+        <!-- Footer -->
+        <footer>
             <div class="form__checkboxContainer">
                 <label for="dummyMode">Test data</label>
                 <input type="checkbox" id="dummyMode">
             </div>
-        </form>
+            <p>v 0.1</p>
+        </footer>
     </main>
 </div>
 
