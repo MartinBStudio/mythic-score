@@ -13,7 +13,7 @@ public class Utils {
 
 
 
-    private int countTierOne(List<DungeonModel> dungeons) {
+    public int countTierOne(List<DungeonModel> dungeons) {
         if (dungeons.size() >= 1) {
             List<Integer> numbers = new ArrayList<>();
             for (DungeonModel d : dungeons) {
@@ -23,7 +23,7 @@ public class Utils {
         }
         return 0;
     }
-    private int findLowestNumber(List<Integer> numbers) {
+    public int findLowestNumber(List<Integer> numbers) {
         if (numbers == null || numbers.isEmpty()) {
             throw new IllegalArgumentException("List must not be empty");
         }
@@ -36,7 +36,7 @@ public class Utils {
         }
         return min;
     }
-    private  int findHighestNumber(List<Integer> numbers) {
+    public  int findHighestNumber(List<Integer> numbers) {
         if (numbers == null || numbers.isEmpty()) {
             throw new IllegalArgumentException("List must not be empty");
         }
@@ -49,7 +49,7 @@ public class Utils {
         }
         return max;
     }
-    private int countPointsForNumber(int number){
+    public int countPointsForNumber(int number){
 
             if (number >= 20) {
                 return 40;
@@ -64,7 +64,7 @@ public class Utils {
         return 0;
     }
 
-    private int countTierFour(List<DungeonModel> dungeons) {
+    public int countTierFour(List<DungeonModel> dungeons) {
         if (dungeons.size() >= 4) {
             List<Integer> numbers = new ArrayList<>();
             for (DungeonModel d : dungeons) {
@@ -77,7 +77,7 @@ public class Utils {
         return 0;
     }
 
-    private int countTierEight(List<DungeonModel> dungeons) {
+    public int countTierEight(List<DungeonModel> dungeons) {
         if (dungeons.size() >= 8) {
             List<Integer> numbers = new ArrayList<>();
             for (DungeonModel d : dungeons) {
