@@ -2,6 +2,7 @@ package bs.windrunner.dashboard.service.utils;
 
 import bs.windrunner.dashboard.model.CharacterModel;
 import bs.windrunner.dashboard.model.DungeonModel;
+import bs.windrunner.dashboard.model.PredefinedCharTypes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,6 @@ import java.util.*;
 @Service
 @Slf4j
 public class Utils {
-
 
 
     public int countTierOne(List<DungeonModel> dungeons) {
@@ -23,6 +23,7 @@ public class Utils {
         }
         return 0;
     }
+
     public int findLowestNumber(List<Integer> numbers) {
         if (numbers == null || numbers.isEmpty()) {
             throw new IllegalArgumentException("List must not be empty");
@@ -36,7 +37,8 @@ public class Utils {
         }
         return min;
     }
-    public  int findHighestNumber(List<Integer> numbers) {
+
+    public int findHighestNumber(List<Integer> numbers) {
         if (numbers == null || numbers.isEmpty()) {
             throw new IllegalArgumentException("List must not be empty");
         }
@@ -49,17 +51,18 @@ public class Utils {
         }
         return max;
     }
-    public int countPointsForNumber(int number){
 
-            if (number >= 20) {
-                return 40;
-            } else if (number >= 18) {
-                return 30;
-            } else if (number >= 10) {
-                return 20;
-            } else if (number >= 2) {
-                return 10;
-            }
+    public int countPointsForNumber(int number) {
+
+        if (number >= 20) {
+            return 40;
+        } else if (number >= 18) {
+            return 30;
+        } else if (number >= 10) {
+            return 20;
+        } else if (number >= 2) {
+            return 10;
+        }
 
         return 0;
     }
@@ -70,7 +73,7 @@ public class Utils {
             for (DungeonModel d : dungeons) {
                 numbers.add(d.getFinishedKeyLevel());
             }
-            Collections.sort(numbers,Collections.reverseOrder());
+            Collections.sort(numbers, Collections.reverseOrder());
             List<Integer> fourHighestNumbers = numbers.subList(0, Math.min(numbers.size(), 4));
             return countPointsForNumber(findLowestNumber(fourHighestNumbers));
         }
@@ -83,7 +86,7 @@ public class Utils {
             for (DungeonModel d : dungeons) {
                 numbers.add(d.getFinishedKeyLevel());
             }
-            Collections.sort(numbers,Collections.reverseOrder());
+            Collections.sort(numbers, Collections.reverseOrder());
             List<Integer> fourHighestNumbers = numbers.subList(0, Math.min(numbers.size(), 8));
             Collections.sort(fourHighestNumbers);
             return countPointsForNumber(findLowestNumber(fourHighestNumbers));
@@ -119,5 +122,14 @@ public class Utils {
                 .tierEightScore(tierEight)
                 .totalScore(total)
                 .build();
+    }
+
+    public String getCharsFromPredefinedParams(PredefinedCharTypes type) {
+        try {
+            return System.getenv(type.getEnvVariable());
+        } catch (Exception e) {
+            log.info("Error occurred during retrieving environment variables, providing fallback.");
+            return "Krogzi";
+        }
     }
 }
