@@ -53,59 +53,47 @@ const modal = () => {
     });
 }
 
-const showLoader = () => {
+const showLoader = (isLoading) => {
     const loaderContainer = document.getElementById('loaderContainer');
-    loaderContainer.style.display = 'flex';
+
+    if (isLoading) {
+        loaderContainer.style.display = 'flex';
+    } else {
+        loaderContainer.style.display = 'none';
+    }
 }
 
-const hideLoader = () => {
-    const loaderContainer = document.getElementById('loaderContainer');
-    loaderContainer.style.display = 'none';
-}
-
-const setLocalStorageData = (localStorageName, jsonObject) => {
-    const jsonString = JSON.stringify(jsonObject);
-    localStorage.setItem(localStorageName, jsonString);
-}
-
-const getLocalStorageData = (localStorageName) => {
-    const storedData = localStorage.getItem(localStorageName);
-    return JSON.parse(storedData);
-}
-
-const setJsonObjectForLocalStorage = (name) => {
-    const array = name.split(' ');
-
-    const arrayOfNames = array.map((value) => ({"name": value}));
-    setLocalStorageData('lastSearched', arrayOfNames)
-}
-
-const getJsonObjectForLocalStorage = (localStorageName) => {
-    const lastSearchedData = getLocalStorageData(localStorageName);
-
-    return lastSearchedData.map(({name}) => name).join(' ');
-}
-
-const fetchData = (name) => {
+const setDisableForAllButtons = (disableState) => {
     const submitButton = document.getElementById('submit');
+    const allButton = document.getElementById('all');
+    const r1Button = document.getElementById('r1');
+    const r2Button = document.getElementById('r2');
+
+    submitButton.disabled = disableState;
+    allButton.disabled = disableState;
+    r1Button.disabled = disableState;
+    r2Button.disabled = disableState;
+}
+
+const fetchData = (apiName, apiSpecificVariable, apiSpecificValue) => {
     const prevWeekCheckbox = document.getElementById('prevWeek');
     const dummyModeCheckbox = document.getElementById('dummyMode');
     const currentWeek = !prevWeekCheckbox.checked;
     const dummyMode = dummyModeCheckbox.checked;
 
-    submitButton.disabled = true;
-    showLoader();
-    fetch(`/characters?name=${name}&currentWeek=${currentWeek}&dummyMode=${dummyMode}`)
+    setDisableForAllButtons(true);
+    showLoader(true);
+    fetch(`/${apiName}?${apiSpecificVariable}=${apiSpecificValue}&currentWeek=${currentWeek}&dummyMode=${dummyMode}`)
         .then(response => response.json())
         .then((characterData) => {
-            hideLoader();
+            showLoader(false);
             modal();
             drawTable(characterData);
-            submitButton.disabled = false;
+            setDisableForAllButtons(false);
         })
         .catch(error => {
-            hideLoader();
-            submitButton.disabled = false;
+            showLoader(false);
+            setDisableForAllButtons(false);
             console.error('Error fetching character data:', error);
         });
 }
@@ -118,24 +106,24 @@ const formSubmitHandler = () => {
         event.preventDefault();
         const name = nameInput.value;
 
-        setJsonObjectForLocalStorage(name)
-        fetchData(name)
+        fetchData('characters', 'name', name);
     });
 }
 
-const lastSearchedHandle = () => {
-    const lastSearchedButton = document.getElementById('lastSearched');
+const loadDataFromServerEnv = (nameEnv) => {
+    const buttonId = document.getElementById(nameEnv.toLowerCase());
 
-    lastSearchedButton.addEventListener('click', (event) => {
+    buttonId.addEventListener('click', (event) => {
         event.preventDefault();
-        const lastSearchedData = getJsonObjectForLocalStorage('lastSearched');
 
-        fetchData(lastSearchedData);
+        fetchData('specificCharacters', 'type', nameEnv.toUpperCase());
     });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    lastSearchedHandle();
+    loadDataFromServerEnv('ALL');
+    loadDataFromServerEnv('R1');
+    loadDataFromServerEnv('R2');
     formSubmitHandler();
 
     google.charts.load('current', {
