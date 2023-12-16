@@ -125,11 +125,12 @@ public class Utils {
     }
 
     public String getCharsFromPredefinedParams(PredefinedCharTypes type) {
-        try {
-            return System.getenv(type.getEnvVariable());
-        } catch (Exception e) {
+        var names = System.getenv(type.getEnvVariable());
+        if (names == null) {
             log.info("Error occurred during retrieving environment variables, providing fallback.");
             return "Krogzi";
+        } else {
+            return names;
         }
     }
 }
