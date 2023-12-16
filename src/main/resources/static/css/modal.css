@@ -1,10 +1,11 @@
 .modal {
+    background-color: #171717;
     border-radius: .8rem;
     border-color: #515151;
     inline-size: calc(100% - 2rem);
     max-inline-size: 80rem;
     outline: none;
-    padding: 2rem;
+    padding: 2.5rem;
 }
 
 .modal::backdrop {
@@ -17,6 +18,7 @@
 .modal__close {
     background: none;
     border: none;
+    color: #fff;
     cursor: pointer;
     inset-block-start: .75rem;
     inset-inline-end: .75rem;
@@ -30,5 +32,4 @@
 }
 
 .modal__heading {
-
 }

@@ -1,0 +1,39 @@
+.table-container {
+    border: .2rem solid #515151;
+    border-radius: .8rem;
+    margin-block-end: 2.5rem;
+}
+
+.table {
+    border-collapse: collapse;
+    color: #fff;
+    font-size: 1.2rem;
+    text-align: left;
+    vertical-align: top;
+    width: 100%;
+}
+
+.table tr {
+    border-color: inherit;
+    border-style: solid;
+    border-width: 0;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(0, 0, 0, .5);
+}
+
+.table tr td,
+.table tr th {
+    border-block-start: .1rem solid #515151;
+    padding: .5rem;
+}
+
+.table > caption + thead > tr:first-child > th,
+.table > colgroup + thead > tr:first-child > th,
+.table > thead:first-child > tr:first-child > th,
+.table > caption + thead > tr:first-child > td,
+.table > colgroup + thead > tr:first-child > td,
+.table > thead:first-child > tr:first-child > td {
+    border-block-start: 0;
+}
